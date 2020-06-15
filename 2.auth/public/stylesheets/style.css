@@ -1,0 +1,15 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.navbar{
+	margin-bottom: 20px;
+}
+
+.errors{
+	width: 50%;
+}
+
+a {
+  color: #00B7FF;
+}
