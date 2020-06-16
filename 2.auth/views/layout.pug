@@ -22,7 +22,10 @@ body
    ul.navbar-nav.ml-auto
     li.nav-item
      a.nav-link(href='/auth/logout') Logout
- .container    
+ .container
+  - if (message)
+   .message.info
+    span= message    
   block content  
 footer.container.text-center
   p &copy; Company 1991-2020

@@ -4,6 +4,8 @@ var multer = require('multer');
 var upload = multer({dest: 'uploads/'});
 var { check, validationResult } = require('express-validator');
 
+var User = require('../models/user');
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -42,26 +44,44 @@ router.post('/register', upload.single('profileimage'),
     var errors = validationResult(req);
 
     if (errors.isEmpty()){
-      	null;
+
+    	var name = req.body.name;
+	  	var email = req.body.email;
+  		var username = req.body.username;
+  		var password = req.body.password;
+  		var confirmPassword = req.body.confirmpassword;
+
+    	if(req.file){
+ 		 	var profileimage = req.file.filename;
+    	} else {
+       		var profileimage = 'noimage.jpg'
+   		 };
+      	
+      	var newUser = new User({
+  			name: name,
+  			email: email,
+  			username: username,
+  			password: password,
+  			profileimage: profileimage
+  		});
+
+  		User.createUser(newUser, function(err, user){
+  			if(err) throw err;
+  			console.log(user);
+  		});
+
+  		req.flash('success', 'You are now registered and can login');
+
+  		res.location('/');
+  		res.redirect('/');
+
   	} else {
   		res.render('register', {
       		errors: errors.array(),
       		title: 'Register'
       	});
-  	}
-
-  	var name = req.body.name;
-  	var email = req.body.email;
-  	var username = req.body.username;
-  	var password = req.body.password;
-  	var confirmPassword = req.body.confirmpassword;
-
-	if(req.file){
- 	 	var profileimage = req.file.filename;
-    } else {
-  		var profileimage = 'nomeimage.jpg';
-    };
-
+  	};
+  	
 });
 
 module.exports = router;
