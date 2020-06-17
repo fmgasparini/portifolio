@@ -4,11 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
+var flash = require('connect-flash');
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
 var multer = require('multer');
 var upload = multer({dest: '/uploads'});
-var flash = require('express-flash');
+var bcrypt = require('bcryptjs');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var db = mongoose.connection;
@@ -36,24 +37,36 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Session Handler
 app.use(session({
-	secret:'secret',
+	secret:'keyboard cat',
 	saveUninitialized: true,
-	resave: true
+	resave: true,
+  	cookie: { secure: true }
 }));
 
 // Flash messages
 app.use(flash());
-
 app.use(function(req, res, next){
-    res.locals.success_messages = req.flash('success_messages');
-    res.locals.error_messages = req.flash('error_messages');
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
     next();
+});
+
+app.get('*', function(req, res, next){
+	//console.log(req);
+	//console.log(req.flash());
+	res.locals.user = req.user || null;
+	//res.locals.messages = req.flash;
+	console.log(req);
+	console.log(req.session.flash);
+	console.log(res.locals.user);
+	next();
 });
 
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Routers
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 
