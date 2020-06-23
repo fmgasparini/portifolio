@@ -44,11 +44,10 @@ app.use(session({
 }));
 
 // Flash messages
-app.use(flash());
-app.use(function(req, res, next){
-    res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error');
-    next();
+app.use(require('connect-flash')());
+app.use(function (req, res, next) {
+  res.locals.messages = require('express-messages')(req, res);
+  next();
 });
 
 app.get('*', function(req, res, next){
